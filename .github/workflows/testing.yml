@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:latest
         ports:
-          - 3306:3306"
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: college_db
