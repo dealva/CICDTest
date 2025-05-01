@@ -43,6 +43,14 @@ jobs:
         run: |
           npm install
 
+      - name: Wait for MySQL to be ready
+        run: |
+          sleep 20  # Wait for MySQL to be fully ready
+
+      - name: Initialize database with init.sql
+        run: |
+          mysql -h 127.0.0.1 -u college_db_user -p${{ secrets.MYSQL_PASSWORD }} college_db < init.sql
+          
       - name: Run tests
         run: |
           npm run test 
