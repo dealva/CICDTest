@@ -16,22 +16,13 @@ jobs:
       mysql:
         image: mysql:latest
         ports:
-          - "${MYSQL_PORT}:3306"
-        options: >-
-          --network=host
-          --restart=always
+          - 3306:3306"
         env:
-          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-          MYSQL_DATABASE: ${MYSQL_DATABASE}
-          MYSQL_USER: ${MYSQL_USER}
-          MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      node-exporter:
-        image: prom/node-exporter:latest
-        ports:
-          - 9100:9100
-        options: >-
-          --network=host
-          --restart=always
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: college_db
+          MYSQL_USER: college_db_user
+          MYSQL_PASSWORD: college_db_pass
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
