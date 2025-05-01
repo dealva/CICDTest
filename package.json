@@ -13,7 +13,8 @@
     "docker:down": "docker-compose down",
     "docker:clean": "docker-compose down -v",
     "docker:mysql": "docker exec -it college-mysql bash",
-    "mysql:shell": "docker exec -it new-college-mysql mysql -h localhost -u root -proot"
+    "mysql:shell": "docker exec -it new-college-mysql mysql -h localhost -u root -proot",
+    "test": "jest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
