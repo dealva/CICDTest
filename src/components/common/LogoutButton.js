@@ -12,7 +12,8 @@ const LogoutButton = () => {
     try {
       await signOut({ redirect: false }); // Ensure it does not redirect immediately
       toast.success('Successfully logged out!');
-      router.push('/login');
+      // router.push('/login');
+      window.location.href = "/login";
     } catch (error) {
       toast.error('Error logging out');
     } finally {

@@ -4,8 +4,10 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { registerValidator } from '@/lib/validators';
-
+import useCsrfToken from './useCsrfToken';
+// import { useCsrfToken } from '@/contexts/csrf-token/client';
 export default function useRegisterForm() {
+    const csrfToken = useCsrfToken();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -29,7 +31,7 @@ export default function useRegisterForm() {
 
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json','X-CSRF-Token': csrfToken }, 
                 body: JSON.stringify(formData),
             });
 
@@ -37,16 +39,19 @@ export default function useRegisterForm() {
 
             if (!res.ok) throw new Error(data.message || 'Registration failed');
 
-            toast.success('Registration successful! Logging you in...');
-
+            toast.success('Registration successful!');
+            
             const result = await signIn('credentials', {
                 redirect: false,
                 email: formData.email,
                 password: formData.password,
             });
-
+            console.log('SignIn Response:', result); // Log the full response
+    
             if (result.ok) {
-                router.push('/dashboard');
+                toast.success('Redirect to dashboard...');
+                // router.push('/dashboard');
+                window.location.href = "/dashboard";
             } else {
                 toast.error('Login failed after registration.');
             }
@@ -57,5 +62,5 @@ export default function useRegisterForm() {
         }
     };
 
-    return { formData, loading, handleChange, handleSubmit };
+    return { formData, loading, handleChange, handleSubmit , csrfToken  };
 }

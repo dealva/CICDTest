@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users_details (
 
 
 
--- Insert students and lecturers 
+-- Insert students and lecturers (password is 'password123' for all / not hashed , for demo purposes, the real account is only admin far below)
 INSERT INTO users (name, email, password, role)
 VALUES
   ('John Doe', 'john.doe@example.com', 'password123', 'student'),
@@ -47,7 +47,6 @@ VALUES
 
 
 -- Insert corresponding dummy data into users_details table for the users
--- Ensure these user IDs match up correctly with the inserted users (starting from user_id = 1 to user_id = 20)
 INSERT INTO users_details (user_id, major, bio, address, phone, photo)
 VALUES
 (1, 'Computer Science', 'Passionate about coding and technology.', '123 Elm St, Springfield, IL', '555-1234', NULL),

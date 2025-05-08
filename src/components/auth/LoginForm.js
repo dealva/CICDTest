@@ -5,15 +5,16 @@ import SubmitButton from '@/components/common/form/SubmitButton';
 import FormHeader from '@/components/common/form/FormHeader';
 import RedirectPrompt from '@/components/common/form/RedirectPrompt';
 import useLoginForm from '@/hooks/auth/useLoginForm';
-import { useEffect, useState } from 'react';
-export default function LoginForm ()  {
-    const { formData, loading, handleChange, handleSubmit } = useLoginForm();
-    const [formValues, setFormValues] = useState(formData);
+// import { useEffect, useState } from 'react';
 
-    useEffect(() => {
-      // Sync form values with formData after the first render
-      setFormValues(formData);
-    }, [formData]);
+export default function LoginForm ()  {
+    const { formData, loading, handleChange, handleSubmit, csrfToken } = useLoginForm();
+    // const [formValues, setFormValues] = useState(formData);
+
+    // useEffect(() => {
+    //   // Sync form values with formData after the first render
+    //   setFormValues(formData);
+    // }, [formData]);
 //   const handleGoogleLogin = async () => {
 //     await signIn('google');
 //   };
@@ -22,6 +23,11 @@ export default function LoginForm ()  {
     <div className="max-w-md mx-auto p-4">
         <FormHeader title="Login" />
         <form onSubmit={handleSubmit} className="space-y-4">
+            <TextInput
+                type="hidden"
+                value={csrfToken}
+                name="csrfToken"
+            />
             <TextInput
                 label="Email"
                 type="email"

@@ -7,9 +7,10 @@ const url = require('node:url');
 const app = express();  // Initialize Express app
 const dev = process.env.NODE_ENV === 'development';
 const nextApp = next({ dev });
-const handle = nextApp.getRequestHandler();
-
-
+const fs = require('fs');
+const path = require('path');
+const mailer = require('./src/mailer');  // Import mailer module
+const Queue = require('bull');  // Import Bull for job queueing
 const { Registry, collectDefaultMetrics , Counter , Histogram } = require('prom-client')
 
 const instrument =new Registry
@@ -35,6 +36,10 @@ global.httpRequestDurationMetrics=httpRequestDurationMetrics
 collectDefaultMetrics({ register: instrument })
 
 nextApp.prepare().then(() => {
+    const emailQueue = new Queue('email', {
+        redis: { host: 'localhost', port: 6379 }
+    });
+    global.emailQueue = emailQueue;  // Make emailQueue globally accessible
     // Log to check if nextApp.prepare() completes successfully
     const server = createServer(app);  // Create an HTTP server with Express
     console.log('Next.js is prepared');
@@ -49,6 +54,21 @@ nextApp.prepare().then(() => {
     // Set up socket.io connection handling
     socket.on('connection', (client) => {
         console.log(`Client connected ${client.id}`);
+
+        client.on("joinRoom", ({ roomId, userId}) => {
+            console.log(`Client ${userId} joined room ${roomId}`);
+            client.join(`room-${roomId}`);
+            client.to(`room-${roomId}`).emit('message', { message: `User ${userId} has joined the room` });
+            client.on('leaveRoom', () => {
+                client.leave(`room-${roomId}`);
+                client.to(`room-${roomId}`).emit('message', { message: `User ${userId} has left the room` });
+            });
+            client.on('sendMessage', (data) => {
+                client.to(`room-${roomId}`).emit('receiveMessage', data);
+            });
+        });
+
+        
     });
 
     // Handle all requests through Next.js
@@ -58,6 +78,13 @@ nextApp.prepare().then(() => {
         res.on('finish', () => {
             const endTime= Date.now()
             const duration= (endTime-startTime)/1000
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                method: req.method,
+                path: req.path,
+                status: res.statusCode,
+                duration
+            };
             if (!req.path.match(/^\/_next|\/api\/metrics|\/favicon\.icon/)){
                 httpRequestMetrics.inc({
                     method: req.method,
@@ -69,7 +96,15 @@ nextApp.prepare().then(() => {
                     path: req.path,
                     status: res.statusCode,
                     duration
-                }, duration)    
+                }, duration)
+                 // Append log line to file (for ELK)
+                fs.appendFile(
+                    path.join(__dirname, 'logs', 'access.log'),
+                    JSON.stringify(logEntry) + '\n',
+                    (err) => {
+                        if (err) console.error('Log write error:', err);
+                    }
+                );    
               
             }
             // console.log(req.path)
@@ -82,4 +117,9 @@ nextApp.prepare().then(() => {
     server.listen(3000, () => {
         console.log('Server running on http://localhost:3000');
     });
+    emailQueue.process(async (job) => {
+        await mailer.sendMail(job.data);
+        console.log('Email sent successfully:', job.data);
+    });
+
 });

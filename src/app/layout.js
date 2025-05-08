@@ -4,6 +4,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClientLayout from "./client_layout";
 import WebsocketContext from "@/contexts/websocket/client"
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,14 +22,15 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <WebsocketContext>
           <ClientLayout>
-              
-                  {children}
-              
+            {/* <CsrfTokenProvider> */}
+              {children}
+            {/* </CsrfTokenProvider> */}
           </ClientLayout>
         </WebsocketContext>
         <ToastContainer position="top-center" />  

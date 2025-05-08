@@ -6,10 +6,17 @@ import SearchBar from './shared/SearchBar';
 import UserTable from './shared/UserTable';
 import { useUsers } from '@/hooks/dashboard/useUsers'; 
 import UserView from './shared/UserView';
+import { useRouter } from 'next/navigation';
 
 export default function AdminView({ users, admin , adminProfile }) {
   const { searchTerm, handleChange, paginatedUsers, handleDelete, currentPage, totalPages, handlePageChange, itemsPerPage, handleItemsPerPageChange } = useUsers(users, admin);
+  // Setting Socket event
+  const router = useRouter();
+  const  chatRoomAdmin  = () => {
+    router.push('/rooms/1'); //go to chat room 1
+  };
 
+  
   return (
     <div className="flex p-6 space-x-6">
       {/* Left side: User View */}
@@ -38,6 +45,12 @@ export default function AdminView({ users, admin , adminProfile }) {
           itemsPerPage={itemsPerPage}
           handleItemsPerPageChange={handleItemsPerPageChange}
         />
+        <button
+          onClick={chatRoomAdmin}
+          className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white px-4 py-2 rounded w-full my-4 transition duration-150"
+        >
+          Chat Room Admin
+        </button>
       </div>
     </div>
   );
