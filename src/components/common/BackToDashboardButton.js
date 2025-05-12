@@ -6,7 +6,8 @@ const BackToDashboardButton = () => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/dashboard'); // Adjust to your dashboard route if different
+    // router.push('/dashboard'); // Adjust to your dashboard route if different
+    window.location.href = "/dashboard"; // Redirect to the dashboard page
   };
 
   return (

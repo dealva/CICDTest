@@ -4,8 +4,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClientLayout from "./client_layout";
 import WebsocketContext from "@/contexts/websocket/client"
-
-
+// import CsrfTokenProvider from "@/contexts/csrf_token/server";
+import ClientProvider from '@/contexts/recaptcha/client';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,9 +28,9 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <WebsocketContext>
           <ClientLayout>
-            {/* <CsrfTokenProvider> */}
+            <ClientProvider>
               {children}
-            {/* </CsrfTokenProvider> */}
+            </ClientProvider>
           </ClientLayout>
         </WebsocketContext>
         <ToastContainer position="top-center" />  

@@ -8,18 +8,12 @@ import RedirectPrompt from '@/components/common/form/RedirectPrompt';
 
 
 export default function RegisterForm (){
-    const { formData, loading, handleChange, handleSubmit , csrfToken } = useRegisterForm();
-
+    const { formData, loading, handleChange, handleSubmit } = useRegisterForm();
     return (
         <>
         <form onSubmit={handleSubmit} className="space-y-4">
             <FormHeader title="Register" />
-            <TextInput
-                type="hidden"
-                value={csrfToken}
-                name="csrfToken"
-            />
-            <TextInput
+                <TextInput
                 label="Name"
                 name="name"
                 value={formData.name}

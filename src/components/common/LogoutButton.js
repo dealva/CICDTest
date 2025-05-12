@@ -7,12 +7,18 @@ import { useRouter } from 'next/navigation'; // For redirection
 const LogoutButton = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  
   const handleLogout = async () => {
+    console.log('LogoutButton rendered'); // Debugging line
     setIsLoading(true);
     try {
       await signOut({ redirect: false }); // Ensure it does not redirect immediately
-      toast.success('Successfully logged out!');
-      // router.push('/login');
+      toast.success('Successfully logged out!');  
+      // console.log('Current path:', router.pathname);
+      // if (router.pathname !== '/login') {
+      //   router.push('/login');  
+      // }
+      
       window.location.href = "/login";
     } catch (error) {
       toast.error('Error logging out');

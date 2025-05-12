@@ -7,7 +7,9 @@ export const metadata = metadataConfig.login;
 export default function LoginPage() {
   return (
     <AuthLayout>
-      <LoginForm />
+
+        <LoginForm />
+
     </AuthLayout>
   );
 };

@@ -47,15 +47,17 @@ export const metadata = metadataConfig.dashboard;
 export default async function DashboardPage() {
   // Get the session information
   const session = await getServerSession(authOptions);
-
+  console.log('Session:', session); // Log the session for debugging
   // If no session or user, redirect to login page
   if (!session || !session.user) {
+    console.log('No session or user found, redirecting to login...'); // Log the redirection
     return redirect('/login');
   }
 
   // Determine user role and fetch the necessary data
   let view;
   const { role, email } = session.user;
+  console.log('User role:', role);
   const userProfile = await fetchUserProfile(email);
   
   switch (role) {

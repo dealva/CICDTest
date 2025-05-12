@@ -5,10 +5,12 @@ import SubmitButton from '@/components/common/form/SubmitButton';
 import FormHeader from '@/components/common/form/FormHeader';
 import RedirectPrompt from '@/components/common/form/RedirectPrompt';
 import useLoginForm from '@/hooks/auth/useLoginForm';
+
 // import { useEffect, useState } from 'react';
 
-export default function LoginForm ()  {
-    const { formData, loading, handleChange, handleSubmit, csrfToken } = useLoginForm();
+function LoginForm ()  {
+    
+    const { formData, loading, handleChange, handleSubmit } = useLoginForm();
     // const [formValues, setFormValues] = useState(formData);
 
     // useEffect(() => {
@@ -23,11 +25,6 @@ export default function LoginForm ()  {
     <div className="max-w-md mx-auto p-4">
         <FormHeader title="Login" />
         <form onSubmit={handleSubmit} className="space-y-4">
-            <TextInput
-                type="hidden"
-                value={csrfToken}
-                name="csrfToken"
-            />
             <TextInput
                 label="Email"
                 type="email"
@@ -70,3 +67,4 @@ export default function LoginForm ()  {
 };
 
 
+export default LoginForm;

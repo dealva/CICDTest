@@ -2,6 +2,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { verifyRecaptcha } from '@/contexts/recaptcha/server';
 
 export const authOptions = {
   providers: [
@@ -16,7 +17,11 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const { email, password } = credentials;
+        const { email, password, recaptchaToken } = credentials;
+        const isValidCaptcha = await verifyRecaptcha(recaptchaToken, 'login');
+        if (!isValidCaptcha) {
+          throw new Error('reCAPTCHA verification failed');
+        }
         const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
 
         if (rows.length === 0) return null;

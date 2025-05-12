@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import mailer from '@/mailer';
 import ejs from 'ejs';
 import path from 'path';
+import { verifyRecaptcha } from '@/contexts/recaptcha/server';
 const hashPassword = async (password) => {
   return bcrypt.hash(password, 10);
 };
@@ -37,7 +38,7 @@ const handleRegistrationError = (error) => {
     );
   }
  
-  console.error('Registration error:', error);
+  // console.error('Registration error:', error);
   return NextResponse.json(
     {
       message: 'Something went wrong, please try again later',
@@ -50,6 +51,14 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
+    const { recaptchaToken } = body;
+    const isValidCaptcha = await verifyRecaptcha(recaptchaToken, 'register');
+    if (!isValidCaptcha) {
+      return NextResponse.json(
+        { message: 'reCAPTCHA verification failed' },
+        { status: StatusCodes.BAD_REQUEST }
+      );
+    }
     // Validate input
     await registerValidator.validate(body, { abortEarly: false });
 
@@ -59,7 +68,7 @@ export async function POST(req) {
     // Insert user and student records
     const userId = await insertUser(body.name, body.email, hashedPassword);
     await insertStudentProfile(userId);
-    console.log('User and student profile created successfully:', body);
+    // console.log('User and student profile created successfully:', body);
 
     const emailContents = await ejs.renderFile(path.join(process.cwd(), 'src/mailers/registration/welcome.ejs'), { body });
     console.log('Email contents:', emailContents);
@@ -70,7 +79,7 @@ export async function POST(req) {
       html: emailContents
     });
 
-    console.log('Email sent successfully:', body.email);
+    // console.log('Email sent successfully:', body.email);
     return NextResponse.json(
       {
         message: 'User and student profile created successfully',

@@ -22,7 +22,7 @@ const TextInput = ({
         type="hidden"
         name={name}
         id={name}
-        value={clientValue}
+        defaultValue={clientValue}
         onChange={onChange}
       />
     );

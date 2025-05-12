@@ -1,12 +1,15 @@
+'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { loginValidator } from '@/lib/validators';
-import useCsrfToken from './useCsrfToken';
+import { useReCaptcha } from 'next-recaptcha-v3';
 
 export default function useLoginForm() {
-    const csrfToken = useCsrfToken();
+    const { executeRecaptcha } = useReCaptcha();
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -23,6 +26,8 @@ export default function useLoginForm() {
         setLoading(true);
       
         try {
+ 
+          const token = await executeRecaptcha('login');
           await loginValidator.validate(formData, { abortEarly: false });
     
       
@@ -30,14 +35,18 @@ export default function useLoginForm() {
             redirect: false,
             email: formData.email,
             password: formData.password,
+            recaptchaToken: token,
           });
       
           console.log("Login response:", res);
       
           if (res?.ok) {
             toast.success("Login successful");
-    
-            // router.push("/dashboard");
+            // router.push('/dashboard');  
+            // console.log('Current path:', router.pathname);
+            //     if (router.pathname !== '/dashboard') {
+            //         router.push('/dashboard');  
+            // }
             window.location.href = "/dashboard";
     
             
@@ -45,7 +54,7 @@ export default function useLoginForm() {
             toast.error(res?.error || "Login failed");
           }
         } catch (err) {
-          toast.error("Validation or CSRF error");
+          toast.error(err || "Validation or CSRF error");
           console.error(err);
         } finally {
           setLoading(false);
@@ -54,5 +63,5 @@ export default function useLoginForm() {
       
       
 
-    return { formData, loading, handleChange, handleSubmit, csrfToken };
+    return { formData, loading, handleChange, handleSubmit };
 }
