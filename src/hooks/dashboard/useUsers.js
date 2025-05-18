@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { canUseAction } from '@/utils/rbac';
-import { useSession } from 'next-auth/react'; 
+
 
 export function useUsers(initialUsers, currentUser, initialItemsPerPage = 10) {
 

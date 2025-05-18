@@ -47,11 +47,16 @@ export const metadata = metadataConfig.dashboard;
 export default async function DashboardPage() {
   // Get the session information
   const session = await getServerSession(authOptions);
-  console.log('Session:', session); // Log the session for debugging
+  // console.log('Session:', session); // Log the session for debugging
   // If no session or user, redirect to login page
   if (!session || !session.user) {
-    console.log('No session or user found, redirecting to login...'); // Log the redirection
-    return redirect('/login');
+     
+      try {
+        return redirect('/login');
+      } catch (err) {
+        throw err; // Rethrow the error to be handled by Next.js
+      }
+      
   }
 
   // Determine user role and fetch the necessary data

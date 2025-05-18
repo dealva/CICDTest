@@ -1,6 +1,8 @@
 import 'whatwg-fetch';
 import "@testing-library/jest-dom"
 import { db } from '@/lib/db';
+import fetchMock from 'jest-fetch-mock';
+fetchMock.enableMocks();
 
 afterAll(async ()=>{
     await db.query('SET FOREIGN_KEY_CHECKS = 0'); // Temporarily disable constraints

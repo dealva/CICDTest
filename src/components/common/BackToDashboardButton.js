@@ -1,13 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 const BackToDashboardButton = () => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleClick = () => {
-    // router.push('/dashboard'); // Adjust to your dashboard route if different
-    window.location.href = "/dashboard"; // Redirect to the dashboard page
+    try{
+      redirect("/dashboard");
+    } catch (error) {
+      throw error; 
+    }
   };
 
   return (

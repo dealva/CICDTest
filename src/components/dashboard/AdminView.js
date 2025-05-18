@@ -6,14 +6,19 @@ import SearchBar from './shared/SearchBar';
 import UserTable from './shared/UserTable';
 import { useUsers } from '@/hooks/dashboard/useUsers'; 
 import UserView from './shared/UserView';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 export default function AdminView({ users, admin , adminProfile }) {
   const { searchTerm, handleChange, paginatedUsers, handleDelete, currentPage, totalPages, handlePageChange, itemsPerPage, handleItemsPerPageChange } = useUsers(users, admin);
   // Setting Socket event
-  const router = useRouter();
+ 
   const  chatRoomAdmin  = () => {
-    router.push('/rooms/1'); //go to chat room 1
+    try { 
+      redirect("/rooms/1");
+    } catch (error) { 
+      throw error; 
+    }
+    
   };
 
   

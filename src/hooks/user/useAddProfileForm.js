@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export default function useAddProfileForm() {
-  const router = useRouter();
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -49,11 +50,14 @@ export default function useAddProfileForm() {
 
       if (response.ok) {
         toast.success('User added successfully!');
-        router.push('/dashboard');
+        redirect('/dashboard');
       } else {
         toast.error(data.message || 'Failed to add user');
       }
     } catch (error) {
+      if (isRedirectError(error)) {
+        throw error;
+      }
       toast.error('Something went wrong');
     } finally {
       setLoading(false);
@@ -61,7 +65,11 @@ export default function useAddProfileForm() {
   };
 
   const handleCancel = () => {
-    router.push('/dashboard');
+    try {
+      redirect('/dashboard');
+    } catch (err) {
+      throw err; // Rethrow the error to be handled by Next.js
+    }
   };
 
   return {

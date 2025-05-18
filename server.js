@@ -3,7 +3,7 @@ const next = require('next');
 const { createServer } = require('node:http');
 const { Server: SocketServer } = require('socket.io');
 const url = require('node:url');
-
+const logger = require('./src/logger');  // Import logger module
 const app = express();  // Initialize Express app
 const dev = process.env.NODE_ENV === 'development';
 const nextApp = next({ dev });
@@ -97,14 +97,20 @@ nextApp.prepare().then(() => {
                     status: res.statusCode,
                     duration
                 }, duration)
+                logger.info(logEntry);
                  // Append log line to file (for ELK)
-                fs.appendFile(
-                    path.join(__dirname, 'logs', 'access.log'),
-                    JSON.stringify(logEntry) + '\n',
-                    (err) => {
-                        if (err) console.error('Log write error:', err);
-                    }
-                );    
+                // try{
+                //     fs.appendFileSync(
+                //         path.join(__dirname, 'logs', 'access.log'),
+                //         JSON.stringify(logEntry) + '\n',
+                //         // (err) => {
+                //         //     if (err) console.error('Log write error:', err);
+                //         // }
+                // );
+                // }catch(err){
+                //     console.error('Log write error:', err);
+                // }
+                  
               
             }
             // console.log(req.path)

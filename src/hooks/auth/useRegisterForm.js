@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { registerValidator } from '@/lib/validators';
 import { useCsrfToken } from '@/contexts/csrf-token/client';
 import { useReCaptcha } from 'next-recaptcha-v3';
-
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export default function useRegisterForm() {
     const csrfToken = useCsrfToken();
@@ -18,7 +18,7 @@ export default function useRegisterForm() {
         confirmPassword: '',
     });
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
+
 
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -60,18 +60,17 @@ export default function useRegisterForm() {
     
             if (result.ok) {
                 toast.success('Redirect to dashboard...');
-                // router.push('/dashboard');
-                // window.location.href = "/dashboard";
-                // console.log('Current path:', router.pathname);
-                // if (router.pathname !== '/dashboard') {
-                //     router.push('/dashboard');  
-                // }
-                window.location.href = "/dashboard";
+                redirect('/dashboard');
             } else {
                 toast.error('Login failed after registration.');
             }
-        } catch (error) {
-            toast.error(error.message || 'Something went wrong.');
+        } catch (err) {
+            if (isRedirectError(err)) {
+                throw err;
+            }else{
+                toast.error(err.message || 'Something went wrong.');
+            }
+            
         } finally {
             setLoading(false);
         }

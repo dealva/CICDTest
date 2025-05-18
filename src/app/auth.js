@@ -22,12 +22,14 @@ export const authOptions = {
         if (!isValidCaptcha) {
           throw new Error('reCAPTCHA verification failed');
         }
-        const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
         if (rows.length === 0) return null;
 
         const user = rows[0];
         const isValid = await bcrypt.compare(password, user.password);
+        console.log('User:', user);
+        console.log('Is valid:', isValid);
         if (!isValid) return null;
         return {
           id: user.id.toString(),

@@ -26,15 +26,16 @@ export default function AddProfileView() {
         <BackToDashboardButton />
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 mt-4 bg-white p-5 rounded-md">
+      <form onSubmit={handleSubmit} className="space-y-4 mt-4 bg-white p-5 rounded-md" aria-label="Add user form">
         <TextInput label="Name *" name="name" value={name} onChange={handleInputChange} required />
         <TextInput label="Email *" type="email" name="email" value={email} onChange={handleInputChange} required />
         <TextInput label="Password *" type="password" name="password" value={password} onChange={handleInputChange} required />
         <TextInput label="Confirm Password *" type="password" name="confirmPassword" value={confirmPassword} onChange={handleInputChange} required />
 
         <div>
-          <label className="block text-gray-700">Role *</label>
+          <label htmlFor="role" className="block text-gray-700">Role *</label>
           <select
+            id="role"
             name="role"
             value={role}
             onChange={handleInputChange}

@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import axios from 'axios';
-
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 export default function useEditProfileForm () {
   const { data: session, status } = useSession();
-  const router = useRouter();
+
   const [formData, setFormData] = useState({
     major: '',
     bio: '',
@@ -22,8 +22,12 @@ export default function useEditProfileForm () {
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      router.push('/login');
-      return;
+      try {
+        return redirect('/login');
+      } catch (err) { 
+        throw err; // Rethrow the error to be handled by Next.js
+      }
+      
     }
    
     role=session.user.role
@@ -42,7 +46,7 @@ export default function useEditProfileForm () {
     };
 
     fetchUserData();
-  }, [session, status, router]);
+  }, [session, status]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +58,13 @@ export default function useEditProfileForm () {
   };
 
   const handleCancel = () => {
-    router.push('/dashboard');
+    try {
+      redirect('/dashboard');
+    }
+    catch (err) { 
+      throw err; // Rethrow the error to be handled by Next.js
+    }
+    
   };
 
   const handleSubmit = async (e) => {
@@ -74,8 +84,11 @@ export default function useEditProfileForm () {
 
     try {
       await axios.put(`/api/user/update/${session.user.email}`, formDataToSend);
-      router.push('/dashboard');
+      redirect('/dashboard');
     } catch (error) {
+      if (isRedirectError(error)) {
+        throw error;
+      }
       console.error('Error updating profile:', error.response ? error.response.data : error.message);
       alert('Failed to update profile, please try again later.');
     } finally {

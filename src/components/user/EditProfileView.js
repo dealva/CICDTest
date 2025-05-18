@@ -14,6 +14,7 @@ export default function EditProfileView ({
   loading,
 
 }){
+  console.log('EditProfileView', formData);
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-400">
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow space-y-6 w-full">
@@ -26,7 +27,7 @@ export default function EditProfileView ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form role="form" onSubmit={handleSubmit} className="space-y-4">
           <MajorSelect value={formData.major} onChange={handleInputChange} />
           
 
@@ -46,8 +47,9 @@ export default function EditProfileView ({
 
           {/* Profile Photo Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Profile Photo</label>
+            <label htmlFor="profilePhoto" className="block text-sm font-medium text-gray-700">Profile Photo</label>
             <input
+              id="profilePhoto"
               type="file"
               accept="image/*"
               onChange={handleFileChange}

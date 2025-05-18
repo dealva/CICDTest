@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { loginValidator } from '@/lib/validators';
 import { useReCaptcha } from 'next-recaptcha-v3';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export default function useLoginForm() {
     const { executeRecaptcha } = useReCaptcha();
@@ -15,7 +16,7 @@ export default function useLoginForm() {
         password: '',
     });
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
+
 
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -24,7 +25,7 @@ export default function useLoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-      
+
         try {
  
           const token = await executeRecaptcha('login');
@@ -42,20 +43,16 @@ export default function useLoginForm() {
       
           if (res?.ok) {
             toast.success("Login successful");
-            // router.push('/dashboard');  
-            // console.log('Current path:', router.pathname);
-            //     if (router.pathname !== '/dashboard') {
-            //         router.push('/dashboard');  
-            // }
-            window.location.href = "/dashboard";
-    
-            
+            redirect("/dashboard");         
           } else {
             toast.error(res?.error || "Login failed");
           }
         } catch (err) {
-          toast.error(err || "Validation or CSRF error");
-          console.error(err);
+          if (isRedirectError(err)) {
+            throw err;
+          }else{
+            toast.error(err || "Validation or CSRF error");
+          }
         } finally {
           setLoading(false);
         }

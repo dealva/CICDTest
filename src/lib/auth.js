@@ -1,14 +1,23 @@
-//check if user not found
+
+// handleUserNotFound
 export function handleUserNotFound(user) {
-    if (!user) {
-      return Response.json({ error: "User not found" }, { status: 404 });
-    }
-    return null;
+  if (!user) {
+    return new Response(JSON.stringify({ error: "User not found" }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  return null;
 }
 
+// handleForbidden
 export function handleForbidden() {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
+  return new Response(JSON.stringify({ error: "Forbidden" }), {
+    status: 403,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
+
 //check RBAC Scope
 export function getRBACScope(session, targetUser) {
     const isOwner = session.userId === targetUser.id;
